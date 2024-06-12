@@ -26,8 +26,10 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    sh 'aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_IMAGE_TAGGED:$APP_VERSION'
-                    sh 'docker push $DOCKER_IMAGE_TAGGED:$APP_VERSION'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                        sh 'aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_IMAGE_TAGGED:$APP_VERSION'
+                        sh 'docker push $DOCKER_IMAGE_TAGGED:$APP_VERSION'
+                    }
                 }
             }
         }
