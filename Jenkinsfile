@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'docker run -d -p 3000:3000 --name test-container $DOCKER_IMAGE_TAGGED'
+                sh 'docker run -d -p 3000:3000 --name test-container $DOCKER_IMAGE_TAGGED:$APP_VERSION'
                 sh 'sleep 10'
                 sh 'curl localhost:3000'
                 sh 'docker stop test-container'
