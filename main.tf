@@ -4,8 +4,8 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+  host                   = aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.eks.token
 }
 
@@ -72,6 +72,10 @@ resource "aws_eks_cluster" "eks" {
     aws_iam_role_policy_attachment.eks_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_AmazonEKSVPCResourceController,
   ]
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = aws_eks_cluster.eks.name
 }
 
 # CREATE IAM ROLES AND POLICIES
@@ -142,6 +146,7 @@ resource "aws_eks_node_group" "eks_nodes" {
   node_group_name = "hello-world-eks-node-group"
   node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = aws_subnet.eks_subnet[*].id
+  instance_types  = ["t3.medium"]
 
   scaling_config {
     desired_size = 2
@@ -168,4 +173,5 @@ output "cluster_ca_certificate" {
 ## cluster_token should be a JWT token:
 output "cluster_token" {
   value = data.aws_eks_cluster_auth.eks.token
+  sensitive = true
 }
