@@ -153,3 +153,19 @@ resource "aws_eks_node_group" "eks_nodes" {
     aws_eks_cluster.eks
   ]
 }
+
+# DEBUGGING
+## cluster_endpoint should show an HTTPS URL:
+output "cluster_endpoint" {
+  value = aws_eks_cluster.eks.endpoint
+}
+
+## cluster_ca_certificate should be a large blob of Base64 text:
+output "cluster_ca_certificate" {
+  value = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)
+}
+
+## cluster_token should be a JWT token:
+output "cluster_token" {
+  value = data.aws_eks_cluster_auth.eks.token
+}
