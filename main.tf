@@ -45,7 +45,7 @@ resource "aws_route" "internet_access" {
 
 resource "aws_eip" "nat" {
   count = 2
-  vpc = true
+  domain = "vpc"
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -215,7 +215,6 @@ resource "aws_eks_node_group" "eks_nodes" {
     aws_eks_cluster.eks
   ]
 }
-
 
 # DEBUGGING
 ## cluster_endpoint should show an HTTPS URL:
