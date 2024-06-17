@@ -39,8 +39,8 @@ pipeline {
                 script {
                     sh "kubectl config use-context --kubeconfig=$KUBE_CONFIG eks-cluster"
                     sh """
-                    kubectl apply -f deployment.yaml --kubeconfig=$KUBE_CONFIG
-                    kubectl apply -f service.yaml --kubeconfig=$KUBE_CONFIG
+                    kubectl apply -f k8s/deployment.yaml --kubeconfig=$KUBE_CONFIG
+                    kubectl apply -f k8s/service.yaml --kubeconfig=$KUBE_CONFIG
                     """
                 }
             }

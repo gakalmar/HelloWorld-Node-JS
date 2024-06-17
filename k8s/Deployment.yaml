@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-nodejs-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: helloworld-nodejs
+  template:
+    metadata:
+      labels:
+        app: helloworld-nodejs
+    spec:
+      containers:
+      - name: helloworld-nodejs
+        image: 891376988072.dkr.ecr.eu-west-2.amazonaws.com/helloworld-nodejs:1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
