@@ -34,6 +34,26 @@ pipeline {
                 }
             }
         }
+        stage('Initialize Infrastructure') {
+            steps {
+                script {
+                    dir('./terraform') {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
+        stage('Apply Infrastructure') {
+            steps {
+                script {
+                    dir('./terraform') {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                            sh 'terraform apply -auto-approve'
+                        }
+                    }
+                }
+            }
+        }
         stage('Deploy to EKS') {
             steps {
                 script {
