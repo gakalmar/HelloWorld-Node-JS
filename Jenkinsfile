@@ -4,6 +4,7 @@ pipeline {
         APP_VERSION = '1.0'
         DOCKER_IMAGE = 'helloworld-nodejs'
         DOCKER_IMAGE_TAGGED = '891376988072.dkr.ecr.eu-west-2.amazonaws.com/helloworld-nodejs'
+        KUBE_CONFIG = '~/.kube/config'
     }
     stages {
         stage('Build') {
@@ -30,6 +31,17 @@ pipeline {
                         sh 'aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_IMAGE_TAGGED:$APP_VERSION'
                         sh 'docker push $DOCKER_IMAGE_TAGGED:$APP_VERSION'
                     }
+                }
+            }
+        }
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    sh "kubectl config use-context --kubeconfig=$KUBE_CONFIG eks-cluster"
+                    sh """
+                    kubectl apply -f deployment.yaml --kubeconfig=$KUBE_CONFIG
+                    kubectl apply -f service.yaml --kubeconfig=$KUBE_CONFIG
+                    """
                 }
             }
         }
