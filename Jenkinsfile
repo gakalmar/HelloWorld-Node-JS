@@ -37,11 +37,10 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 script {
-                    sh "kubectl config use-context --kubeconfig=$KUBE_CONFIG eks-cluster"
-                    sh """
-                    kubectl apply -f k8s/deployment.yaml --kubeconfig=$KUBE_CONFIG
-                    kubectl apply -f k8s/service.yaml --kubeconfig=$KUBE_CONFIG
-                    """
+                    withCredentials([file(credentialsId: 'kubeconfig-for-eks', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl apply -f deployment.yaml'
+                        sh 'kubectl apply -f service.yaml'
+                    }
                 }
             }
         }
