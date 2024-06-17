@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        stage('ABackend Infrastructure') {
+        stage('Backend Infrastructure') {
             steps {
                 script {
                     dir('./terraform/backend') {
