@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'kubeconfig-for-eks', variable: 'KUBECONFIG'), 
-                                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id', 
+                                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', 
                                     accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         sh 'export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID'
                         sh 'export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY'
