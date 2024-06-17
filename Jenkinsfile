@@ -34,50 +34,42 @@ pipeline {
                 }
             }
         }
-        stage('Initialize Infrastructure') {
-            steps {
-                script {
-                    dir('./terraform') {
-                        sh 'terraform init'
-                    }
-                }
-            }
-        }
         stage('Apply Infrastructure') {
             steps {
                 script {
                     dir('./terraform') {
                         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                            sh 'terraform init'
                             sh 'terraform apply -auto-approve'
                         }
                     }
                 }
             }
         }
-        stage('Update kubeconfig') {
-            steps {
-                script {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh 'aws eks update-kubeconfig --region eu-west-2 --name hello-world-eks-cluster'
-                    }
-                }
-            }
-        }
-        stage('Deploy to EKS') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'kubeconfig-for-eks', variable: 'KUBECONFIG'), 
-                                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', 
-                                    accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh 'export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID'
-                        sh 'export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY'
-                        sh 'export AWS_DEFAULT_REGION=eu-west-2'
-                        sh 'kubectl apply -f ./k8s/deployment.yaml --validate=false'
-                        sh 'kubectl apply -f ./k8s/service.yaml --validate=false'
-                    }
-                }
-            }
-        }
+        // stage('Update kubeconfig') {
+        //     steps {
+        //         script {
+        //             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        //                 sh 'aws eks update-kubeconfig --region eu-west-2 --name hello-world-eks-cluster'
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Deploy to EKS') {
+        //     steps {
+        //         script {
+        //             withCredentials([file(credentialsId: 'kubeconfig-for-eks', variable: 'KUBECONFIG'), 
+        //                             [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'fe277f34-c214-41e7-9ea6-b120bc80e1dc', 
+        //                             accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        //                 sh 'export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID'
+        //                 sh 'export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY'
+        //                 sh 'export AWS_DEFAULT_REGION=eu-west-2'
+        //                 sh 'kubectl apply -f ./k8s/deployment.yaml --validate=false'
+        //                 sh 'kubectl apply -f ./k8s/service.yaml --validate=false'
+        //             }
+        //         }
+        //     }
+        // }
     }
     post {
         success {
