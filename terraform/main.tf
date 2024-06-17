@@ -262,16 +262,16 @@ resource "kubernetes_deployment" "helloworld-deployment" {
           image = "891376988072.dkr.ecr.eu-west-2.amazonaws.com/helloworld-nodejs:1.0"
           name  = "helloworld"
 
-          ports {
+          port {
             container_port = 3000
           }
 
           resources {
-            requests {
+            requests = {
               cpu    = "100m"
               memory = "200Mi"
             }
-            limits {
+            limits = {
               cpu    = "200m"
               memory = "400Mi"
             }
@@ -292,7 +292,7 @@ resource "kubernetes_service" "helloworld-service" {
       app = "helloworld-app"
     }
 
-    ports {
+    port {
       name        = "http"
       port        = 80
       target_port = 3000
